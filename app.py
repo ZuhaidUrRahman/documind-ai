@@ -4,12 +4,10 @@ import subprocess
 import uuid
 import logging
 import tempfile
+import shutil
 
 import pymupdf
 import pytesseract
-# Force path on every import
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
 from PIL import Image, ImageOps
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, render_template, send_from_directory
@@ -51,8 +49,23 @@ DOCUMENT_TEXTS = {}
 logging.basicConfig(level=logging.INFO)
 
 def force_tesseract():
-    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    return pytesseract.pytesseract.tesseract_cmd
+    """Set Tesseract path for Windows or Linux (Render)."""
+    configured = os.getenv("TESSERACT_CMD", "").strip().strip('"').strip("'")
+    candidates = [
+        configured,
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        "/usr/bin/tesseract",
+        "/usr/local/bin/tesseract",
+        shutil.which("tesseract"),
+    ]
+    for cand in candidates:
+        if cand and Path(cand).is_file():
+            pytesseract.pytesseract.tesseract_cmd = str(Path(cand))
+            return pytesseract.pytesseract.tesseract_cmd
+    # Fallback
+    pytesseract.pytesseract.tesseract_cmd = "tesseract"
+    return "tesseract"
 
 def get_openai():
     key = os.getenv("OPENAI_API_KEY", "").strip()
@@ -93,9 +106,12 @@ def extract_text(path: Path):
             for i, page in enumerate(doc, 1):
                 text = page.get_text("text").strip()
                 if not text:
-                    pix = page.get_pixmap(matrix=pymupdf.Matrix(2, 2), alpha=False)
-                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                    text = ocr_image(img)
+                    try:
+                        pix = page.get_pixmap(matrix=pymupdf.Matrix(2, 2), alpha=False)
+                        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                        text = ocr_image(img)
+                    except Exception as e:
+                        text = f"[OCR failed: {e}]"
                 pages.append(f"[Page {i}]\n{text}")
         return "\n\n".join(pages)
     if ext in {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}:
@@ -111,8 +127,8 @@ def index():
 @app.route("/api/health")
 def health():
     try:
-        force_tesseract()
-        ver = subprocess.check_output([pytesseract.pytesseract.tesseract_cmd, "--version"], text=True, timeout=10).splitlines()[0]
+        cmd = force_tesseract()
+        ver = subprocess.check_output([cmd, "--version"], text=True, timeout=10).splitlines()[0]
         ocr_ok = True
     except Exception as e:
         ver = str(e)
@@ -310,7 +326,6 @@ def download(filename):
 
 @app.route("/api/debug")
 def debug():
-    import pytesseract
     return jsonify({
         "tesseract_cmd": str(getattr(pytesseract.pytesseract, "tesseract_cmd", "NOT SET")),
         "openai_key_present": bool(os.getenv("OPENAI_API_KEY")),
@@ -319,7 +334,10 @@ def debug():
     })
 
 if __name__ == "__main__":
-    force_tesseract()
-    print("OCR ready:", subprocess.check_output([pytesseract.pytesseract.tesseract_cmd, "--version"], text=True).splitlines()[0])
+    try:
+        cmd = force_tesseract()
+        print("OCR ready:", subprocess.check_output([cmd, "--version"], text=True).splitlines()[0])
+    except Exception as e:
+        print("OCR unavailable:", e)
     print("OpenAI key loaded:", bool(os.getenv("OPENAI_API_KEY")))
-    app.run(host="127.0.0.1", port=int(os.getenv("PORT", 5000)), debug=False)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=False)
