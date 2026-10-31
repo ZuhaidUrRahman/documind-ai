@@ -1,0 +1,15 @@
+﻿.venv/
+.env
+__pycache__/
+uploads/
+outputs/
+Flask App/Upload/
+Flask App/Output/
+*.pdf
+*.mp3
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.docx
+*.xlsx

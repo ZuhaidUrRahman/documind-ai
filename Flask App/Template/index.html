@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocuMind AI — PDF Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#142744;--navy2:#1d3b63;--blue:#4263eb;--cyan:#12b8a6;--bg:#f3f6fb;--ink:#17243a;--muted:#718096;--line:#e5eaf2;--white:#fff;--shadow:0 14px 40px rgba(22,45,80,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.topbar{height:76px;background:linear-gradient(110deg,#142744,#234b78);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 30px;box-shadow:0 5px 20px #12284922;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;font:800 21px Manrope,sans-serif;letter-spacing:-.5px}.brandmark{height:40px;width:40px;border-radius:13px;background:linear-gradient(145deg,#fff,#dbeafe);display:grid;place-items:center;color:#1b3d68;font-size:22px}.brand small{display:block;font:500 11px "DM Sans";letter-spacing:1.7px;color:#c5d8f2;text-transform:uppercase;margin-top:2px}
+.top-right{display:flex;align-items:center;gap:14px;font-size:13px;color:#dbeafe}.status-dot{width:8px;height:8px;border-radius:50%;background:#39d6ad;display:inline-block;margin-right:6px}
+.app{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:calc(100vh - 76px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:76px;height:calc(100vh - 76px);overflow:auto}
+.side-label{font-size:10px;font-weight:700;color:#9aa7b8;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin:10px 0 9px}
+.nav{width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:11px 12px;border-radius:11px;background:transparent;color:#607089;font-weight:600;font-size:13px;margin:3px 0;transition:.15s}.nav .ico{width:22px;font-size:17px;text-align:center}.nav:hover{background:#f2f6ff;color:var(--blue)}.nav.active{background:#eaf0ff;color:#2f55d4;box-shadow:inset 3px 0 #4263eb}
+.sidebar-note{margin:24px 4px 0;padding:15px;border-radius:15px;background:linear-gradient(145deg,#172d4d,#24517b);color:white}.sidebar-note strong{font:700 13px Manrope}.sidebar-note p{font-size:11px;color:#d1e0f3;line-height:1.6;margin:8px 0 0}
+.main{padding:28px;min-width:0;max-width:1600px;width:100%;margin:0 auto}.welcome{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:23px}.eyebrow{color:#4263eb;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1.7px}.welcome h1{font:800 clamp(24px,3vw,32px) Manrope;margin:7px 0 7px;letter-spacing:-1px}.welcome p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}.secure{background:#e5fbf4;color:#16876e;border-radius:999px;padding:9px 12px;font-size:11px;font-weight:700;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat{background:white;border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:0 4px 14px #243c5a06}.stat-top{display:flex;justify-content:space-between;color:#78869b;font-size:11px;font-weight:600}.stat-icon{height:30px;width:30px;display:grid;place-items:center;background:#eef2ff;border-radius:9px;font-size:15px}.stat strong{display:block;font:800 21px Manrope;margin-top:10px}.stat small{color:#8b98aa;font-size:11px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.panel-head h2{font:800 15px Manrope;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0}.panel-body{padding:22px}.tool-view{display:none}.tool-view.active{display:block}.drop{border:1.5px dashed #c8d4e6;border-radius:15px;background:#f8faff;padding:25px 18px;text-align:center;transition:.2s}.drop:hover{border-color:#6d88ef;background:#f4f7ff}.drop-icon{width:55px;height:55px;margin:0 auto 12px;border-radius:17px;display:grid;place-items:center;background:#e8eeff;font-size:25px}.drop h3{font:700 15px Manrope;margin:0 0 6px}.drop p{font-size:12px;color:#8390a3;margin:0 0 15px;line-height:1.5}.file-input{width:100%;max-width:420px;border:1px solid #e0e6f0;background:white;border-radius:9px;padding:10px;font-size:12px;color:#61718a}.file-name{font-size:12px;color:#4263eb;margin-top:8px;min-height:16px;word-break:break-word}
+.field{margin-top:17px}.field label{display:block;font-size:12px;font-weight:700;color:#42516a;margin-bottom:7px}.field input,.field select,.field textarea,.chat-input{width:100%;border:1px solid #dfe6f0;background:#fff;border-radius:10px;padding:12px 13px;outline:none;color:var(--ink);font-size:13px}.field textarea{min-height:120px;resize:vertical;line-height:1.6}.field input:focus,.field select:focus,.field textarea:focus,.chat-input:focus{border-color:#7892f3;box-shadow:0 0 0 3px #4263eb14}
+.btn{border-radius:10px;padding:12px 16px;font-size:12px;font-weight:700;display:inline-flex;justify-content:center;align-items:center;gap:8px;transition:.15s}.btn:disabled{opacity:.6;cursor:wait}.btn-primary{background:linear-gradient(120deg,#4263eb,#3152d3);color:#fff;box-shadow:0 5px 12px #4263eb25}.btn-primary:hover{transform:translateY(-1px)}.btn-green{background:#0e9f79;color:white}.btn-soft{background:#eef2ff;color:#3857ce}.btn-outline{background:white;border:1px solid #dfe6f0;color:#51617a}.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn-row .btn{flex:1}
+.result{display:none;margin-top:18px;border:1px solid #dce6f5;background:#fbfdff;border-radius:13px;padding:16px}.result.show{display:block}.result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.result-head strong{font:700 13px Manrope}.result pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.75 "DM Sans";color:#46546b;max-height:420px;overflow:auto;margin:0}.downloads{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.downloads a{background:#eaf8f3;color:#128365;text-decoration:none;padding:9px 11px;border-radius:8px;font-size:11px;font-weight:700}
+.right-stack{display:grid;gap:18px}.quick-card{padding:18px}.quick-card h3{font:800 14px Manrope;margin:0 0 6px}.quick-card>p{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 15px}.quick-action{display:flex;align-items:center;gap:11px;width:100%;background:white;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left;margin-top:9px}.quick-action:hover{border-color:#9caffb;background:#fafbff}.qa-icon{height:36px;width:36px;border-radius:11px;background:#edf2ff;display:grid;place-items:center;font-size:17px;flex-shrink:0}.quick-action strong{font-size:12px;display:block}.quick-action small{font-size:10px;color:#8a97a9;display:block;margin-top:4px}.tip{padding:16px;border-radius:14px;background:linear-gradient(130deg,#ecfdf7,#f0fbff);border:1px solid #d7f4eb}.tip strong{font-size:12px;color:#13765e}.tip p{font-size:11px;color:#577e76;line-height:1.6;margin:7px 0 0}
+.chat-box{border:1px solid var(--line);border-radius:12px;background:#f8faff;padding:14px;min-height:150px;max-height:310px;overflow:auto;font-size:13px;line-height:1.7;color:#526078;white-space:pre-wrap}.chat-row{display:flex;gap:8px;margin-top:10px}.chat-row input{flex:1;min-width:0}.notice{padding:11px 13px;border-radius:10px;background:#fff9e8;color:#7e6626;font-size:12px;line-height:1.6;margin-bottom:18px}.toast{position:fixed;bottom:22px;right:22px;max-width:420px;background:#172d4d;color:white;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);font-size:12px;z-index:20;display:none}.toast.show{display:block}.loading{display:inline-block;width:13px;height:13px;border:2px solid #ffffff70;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.footer{padding:22px 0 0;color:#9aa6b6;font-size:11px;text-align:center}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.right-stack{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.topbar{padding:0 16px;height:66px}.brand{font-size:17px}.top-right{font-size:11px}.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:10px;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);gap:5px}.side-label,.sidebar-note{display:none}.nav{min-width:max-content;width:auto;margin:0;padding:10px}.main{padding:18px 13px}.welcome{display:block}.secure{display:inline-block;margin-top:14px}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:18px}.panel-body{padding:15px}.panel-head{padding:16px}.right-stack{grid-template-columns:1fr}.btn-row{flex-direction:column}.btn-row .btn{width:100%}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brandmark">▤</div><div>DocuMind AI<small>ALL-IN-ONE DOCUMENT WORKSPACE</small></div></div>
+  <div class="top-right"><span><i class="status-dot"></i>Workspace ready</span><span>✦ AI powered</span></div>
+</header>
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-label">WORKSPACE</div>
+    <button class="nav active" data-view="overview"><span class="ico">⌂</span> Overview</button>
+    <div class="side-label">DOCUMENT TOOLS</div>
+    <button class="nav" data-view="pdfchat"><span class="ico">▤</span> AI PDF Chat</button>
+    <button class="nav" data-view="ocr"><span class="ico">⌕</span> OCR & Searchable PDF</button>
+    <button class="nav" data-view="summary"><span class="ico">✧</span> AI Summarizer</button>
+    <button class="nav" data-view="translate"><span class="ico">文</span> Translate & Localize</button>
+    <div class="side-label">AUDIO & VIDEO</div>
+    <button class="nav" data-view="audio"><span class="ico">♫</span> Audio Transcription</button>
+    <button class="nav" data-view="video"><span class="ico">▷</span> Video Transcription</button>
+    <div class="side-label">CONVERSION</div>
+    <button class="nav" data-view="word"><span class="ico">W</span> PDF to Word</button>
+    <button class="nav" data-view="excel"><span class="ico">▦</span> PDF to Excel</button>
+    <div class="sidebar-note"><strong>✦ Work smarter with AI</strong><p>Extract, understand, translate and convert your documents from one clean workspace.</p></div>
+  </aside>
+  <main class="main">
+    <section class="welcome">
+      <div><div class="eyebrow">YOUR DOCUMENT WORKSPACE</div><h1 id="pageTitle">Everything you need, in one place.</h1><p id="pageDesc">Turn documents, scans, audio and video into useful, editable content.</p></div>
+      <div class="secure">✓ Private workspace · Local file storage</div>
+    </section>
+    <section class="stats">
+      <div class="stat"><div class="stat-top">Document tools <span class="stat-icon">▤</span></div><strong>08</strong><small>Purpose-built workflows</small></div>
+      <div class="stat"><div class="stat-top">Language support <span class="stat-icon">文</span></div><strong>Multi</strong><small>Languages supported by AI model</small></div>
+      <div class="stat"><div class="stat-top">Export formats <span class="stat-icon">⇩</span></div><strong>4+</strong><small>TXT, DOCX, XLSX, PDF</small></div>
+      <div class="stat"><div class="stat-top">AI assistance <span class="stat-icon">✧</span></div><strong>On demand</strong><small>API key required for AI tools</small></div>
+    </section>
+    <div class="workspace">
+      <section class="panel">
+        <div class="panel-head"><div><h2 id="panelTitle">Welcome to your workspace</h2><p id="panelDesc">Choose a tool from the left to get started.</p></div><span style="font-size:20px;color:#4263eb">✦</span></div>
+        <div class="panel-body">
+          <div class="tool-view active" id="view-overview">
+            <div class="notice">Start with any tool below. OCR requires Tesseract OCR installed on your computer. AI features require an OpenAI API key in your <code>.env</code> file.</div>
+            <div class="drop"><div class="drop-icon">✦</div><h3>Your documents, upgraded</h3><p>Chat with PDFs, recognize scanned text, translate content, transcribe recordings and convert files.</p><button class="btn btn-primary" onclick="showView('pdfchat')">Open AI PDF Chat →</button></div>
+            <div class="field"><label>Quick upload a PDF for AI chat</label><input class="file-input" id="quickPdf" type="file" accept=".pdf"><div class="file-name" id="quickPdfName"></div><div class="btn-row"><button class="btn btn-primary" onclick="quickUpload()">Upload PDF to workspace</button></div></div>
+            <div class="result" id="quickResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-pdfchat">
+            <div class="drop"><div class="drop-icon">▤</div><h3>Upload one or more PDFs</h3><p>Ask questions grounded in your documents. Answers may cite the document and page labels extracted from text-based PDFs.</p><input class="file-input" id="chatFiles" type="file" accept=".pdf" multiple><div class="file-name" id="chatFilesName"></div><div class="btn-row"><button class="btn btn-primary" onclick="uploadChatFiles()">Add PDFs to chat</button></div></div>
+            <div class="field"><label>Uploaded documents</label><div id="docList" style="font-size:12px;color:#718096">No PDFs uploaded in this session.</div></div>
+            <div class="field"><label>Ask your documents</label><div id="chatOutput" class="chat-box">Your answers will appear here. Upload a PDF to begin.</div><div class="chat-row"><input id="chatQuestion" placeholder="e.g. What are the main findings?"><button class="btn btn-primary" onclick="askChat()">Ask AI</button></div></div>
+          </div>
+
+          <div class="tool-view" id="view-ocr">
+            <div class="drop"><div class="drop-icon">⌕</div><h3>Extract text from scans and images</h3><p>Upload PDF, PNG, JPG, TIFF, BMP or WEBP. Tesseract OCR must be installed for text recognition.</p><input class="file-input" id="ocrFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff"><div class="file-name" id="ocrFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-primary" onclick="runFileTool('/api/ocr','ocrFile','ocrResult')">Extract text (OCR)</button><button class="btn btn-green" onclick="runFileTool('/api/searchable-pdf','ocrFile','searchableResult')">Create searchable PDF</button></div>
+            <div class="result" id="ocrResult"></div><div class="result" id="searchableResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-summary">
+            <div class="field" style="margin-top:0"><label>Document text</label><textarea id="summaryText" placeholder="Paste extracted document text here, or upload a PDF below and run OCR if it is scanned."></textarea></div>
+            <div class="field"><label>Or select a PDF to extract its text</label><input class="file-input" id="summaryFile" type="file" accept=".pdf"><div class="file-name" id="summaryFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-outline" onclick="extractForSummary()">Extract PDF text</button><button class="btn btn-primary" onclick="summarizeText()">Generate summary</button></div>
+            <div class="result" id="summaryResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-translate">
+            <div class="field" style="margin-top:0"><label>Text to translate</label><textarea id="translateText" placeholder="Paste text, transcript, or OCR output to translate..."></textarea></div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+              <div class="field"><label>Target language</label><input id="targetLanguage" list="languages" value="Spanish" placeholder="Enter any language"><datalist id="languages"><option>English</option><option>Urdu</option><option>Arabic</option><option>Chinese (Simplified)</option><option>French</option><option>German</option><option>Hindi</option><option>Japanese</option><option>Pashto</option><option>Portuguese</option><option>Russian</option><option>Spanish</option><option>Turkish</option></datalist></div>
+              <div class="field"><label>Region / locale (optional)</label><input id="locale" placeholder="e.g. Canadian French, Gulf Arabic"></div>
+            </div>
+            <div class="field"><label>Writing style</label><select id="translationStyle"><option value="natural">Natural and fluent</option><option value="formal">Formal / professional</option><option value="conversational">Conversational</option><option value="marketing">Marketing localization</option><option value="simple language">Plain language</option></select></div>
+            <div class="btn-row"><button class="btn btn-primary" onclick="translateText()">Translate & localize</button></div><div class="result" id="translateResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-audio">
+            <div class="drop"><div class="drop-icon">♫</div><h3>Turn speech into text</h3><p>Audio only: MP3, WAV, M4A, AAC, OGG or FLAC. A transcription API key is required.</p><input class="file-input" id="audioFile" type="file" accept=".mp3,.wav,.m4a,.aac,.ogg,.flac"><div class="file-name" id="audioFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-primary" onclick="runFileTool('/api/transcribe/audio','audioFile','audioResult')">Transcribe audio</button></div><div class="result" id="audioResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-video">
+            <div class="drop"><div class="drop-icon">▷</div><h3>Transcribe video speech</h3><p>Video only: MP4, MOV, MKV or WEBM. Audio is extracted automatically. This MVP is intended for shorter files.</p><input class="file-input" id="videoFile" type="file" accept=".mp4,.mov,.mkv,.webm"><div class="file-name" id="videoFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-primary" onclick="runFileTool('/api/transcribe/video','videoFile','videoResult')">Transcribe video</button></div><div class="result" id="videoResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-word">
+            <div class="drop"><div class="drop-icon">W</div><h3>Convert PDF to editable Word</h3><p>Creates a DOCX from extracted page text. Complex tables, columns and graphics may not retain their original layout.</p><input class="file-input" id="wordFile" type="file" accept=".pdf"><div class="file-name" id="wordFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-primary" onclick="runFileTool('/api/convert/word','wordFile','wordResult')">Convert to Word</button></div><div class="result" id="wordResult"></div>
+          </div>
+
+          <div class="tool-view" id="view-excel">
+            <div class="drop"><div class="drop-icon">▦</div><h3>Extract PDF tables to Excel</h3><p>Detects text-based tables and exports them to XLSX. Scanned PDFs may need OCR, and complex table layouts may require cleanup.</p><input class="file-input" id="excelFile" type="file" accept=".pdf"><div class="file-name" id="excelFileName"></div></div>
+            <div class="btn-row"><button class="btn btn-green" onclick="runFileTool('/api/convert/excel','excelFile','excelResult')">Convert to Excel</button></div><div class="result" id="excelResult"></div>
+          </div>
+        </div>
+      </section>
+      <aside class="right-stack">
+        <div class="panel quick-card"><h3>Quick actions</h3><p>Jump directly into a common task.</p>
+          <button class="quick-action" onclick="showView('audio')"><span class="qa-icon">♫</span><span><strong>Transcribe audio</strong><small>Audio file → editable text</small></span></button>
+          <button class="quick-action" onclick="showView('video')"><span class="qa-icon">▷</span><span><strong>Transcribe video</strong><small>Video speech → transcript</small></span></button>
+          <button class="quick-action" onclick="showView('translate')"><span class="qa-icon">文</span><span><strong>Translate content</strong><small>Translate and localize text</small></span></button>
+          <button class="quick-action" onclick="showView('ocr')"><span class="qa-icon">⌕</span><span><strong>Run OCR</strong><small>Scans and images → text</small></span></button>
+        </div>
+        <div class="tip"><strong>✦ Pro tip</strong><p>For scanned PDFs, run OCR before summarizing or chatting. For accurate Excel exports, use PDFs that contain selectable text and clearly structured tables.</p></div>
+        <div class="panel quick-card"><h3>Export-ready results</h3><p>Tools provide downloads where applicable. Keep your files private: this demo stores uploads and outputs on the server until you remove them.</p><button class="btn btn-outline" style="width:100%" onclick="showView('summary')">Summarize a document</button></div>
+      </aside>
+    </div>
+    <div class="footer">DocuMind AI · Built for faster document workflows · Verify AI-generated output before relying on it.</div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const titles={
+overview:["Everything you need, in one place.","Turn documents, scans, audio and video into useful, editable content.","Welcome to your workspace","Choose a tool from the left to get started."],
+pdfchat:["Ask your documents anything.","Chat with one or more uploaded PDFs and get grounded answers.","AI PDF Chat","Upload PDFs, then ask a question."],
+ocr:["Make scanned documents searchable.","Recognize text from scans and images, then download the result.","OCR & Searchable PDF","Extract text or create a searchable PDF."],
+summary:["Turn long documents into clear takeaways.","Create a concise summary with key points and action items.","AI Summarizer","Paste text or extract it from a PDF."],
+translate:["Speak to a global audience.","Translate text and adapt tone or regional wording for your audience.","Translate & Localize","Enter text and choose a target language."],
+audio:["Convert speech into text.","Transcribe an audio recording and download the transcript.","Audio Transcription","Upload an audio file."],
+video:["Get the words from your video.","Extract audio from video and generate a downloadable transcript.","Video Transcription","Upload a video file."],
+word:["Make your PDF editable.","Extract PDF text into a Microsoft Word document.","PDF to Word","Upload a PDF to convert."],
+excel:["Move PDF tables into Excel.","Detect tables in text-based PDFs and export them to a spreadsheet.","PDF to Excel","Upload a PDF containing tables."]
+};
+let uploadedDocs=[];
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4500)}
+function showView(name){document.querySelectorAll('.tool-view').forEach(el=>el.classList.remove('active'));document.getElementById('view-'+name).classList.add('active');document.querySelectorAll('.nav').forEach(el=>el.classList.toggle('active',el.dataset.view===name));const a=titles[name];document.getElementById('pageTitle').textContent=a[0];document.getElementById('pageDesc').textContent=a[1];document.getElementById('panelTitle').textContent=a[2];document.getElementById('panelDesc').textContent=a[3];}
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+[['quickPdf','quickPdfName'],['chatFiles','chatFilesName'],['ocrFile','ocrFileName'],['summaryFile','summaryFileName'],['audioFile','audioFileName'],['videoFile','videoFileName'],['wordFile','wordFileName'],['excelFile','excelFileName']].forEach(([input,label])=>{document.getElementById(input).addEventListener('change',e=>{const fs=[...e.target.files];document.getElementById(label).textContent=fs.map(f=>f.name).join(', ')||''})});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderResult(id,data){const box=document.getElementById(id);box.classList.add('show');let html='';if(data.text||data.answer){html+=`<div class="result-head"><strong>Result</strong><button class="btn btn-soft" onclick="copyResult('${id}')">Copy text</button></div><pre>${escapeHtml(data.text||data.answer)}</pre>`}else if(data.message){html+=`<p style="font-size:12px;line-height:1.6">${escapeHtml(data.message)}</p>`}if(data.downloads?.length){html+='<div class="downloads">'+data.downloads.map(d=>`<a href="${d.url}" download>${escapeHtml(d.label||'Download')}</a>`).join('')+'</div>'}box.innerHTML=html||'<p>Task completed.</p>'}
+function copyResult(id){const pre=document.querySelector('#'+id+' pre');if(pre)navigator.clipboard.writeText(pre.innerText).then(()=>showToast('Copied to clipboard.')).catch(()=>showToast('Copy is not available in this browser.'))}
+async function postForm(url,form){const r=await fetch(url,{method:'POST',body:form});const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');return d}
+async function runFileTool(url,inputId,resultId){const file=document.getElementById(inputId).files[0];if(!file){showToast('Please choose a file first.');return}const box=document.getElementById(resultId);box.classList.add('show');box.innerHTML='<span class="loading" style="border-color:#4263eb55;border-top-color:#4263eb"></span> Processing your file…';const form=new FormData();form.append('file',file);try{const data=await postForm(url,form);renderResult(resultId,data);showToast('Task completed.')}catch(e){box.innerHTML=`<p style="color:#b42318;font-size:12px;line-height:1.6">${escapeHtml(e.message)}</p>`;showToast('Could not complete the task. Check the message.')} }
+async function quickUpload(){const file=document.getElementById('quickPdf').files[0];if(!file){showToast('Choose a PDF first.');return}const form=new FormData();form.append('file',file);try{const d=await postForm('/api/upload',form);if(!d.document_id)throw new Error('No document ID returned');uploadedDocs.push(d);renderDocList();document.getElementById('quickResult').classList.add('show');document.getElementById('quickResult').innerHTML=`<p style="font-size:12px">Uploaded <strong>${escapeHtml(d.filename)}</strong>. Open AI PDF Chat to ask questions.</p>`;showToast('PDF added to this session.')}catch(e){showToast(e.message)}}
+async function uploadChatFiles(){const files=[...document.getElementById('chatFiles').files];if(!files.length){showToast('Choose one or more PDFs.');return}for(const file of files){const form=new FormData();form.append('file',file);try{const d=await postForm('/api/upload',form);uploadedDocs.push(d)}catch(e){showToast(file.name+': '+e.message)}}renderDocList();showToast('Upload process finished.')}
+function renderDocList(){document.getElementById('docList').innerHTML=uploadedDocs.length?uploadedDocs.map(d=>`<label style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef1f6"><input type="checkbox" class="doc-check" value="${d.document_id}" checked><span>▤ ${escapeHtml(d.filename)}</span></label>`).join(''):'No PDFs uploaded in this session.'}
+async function askChat(){const question=document.getElementById('chatQuestion').value.trim();const ids=[...document.querySelectorAll('.doc-check:checked')].map(e=>e.value);if(!question||!ids.length){showToast('Upload PDFs, select documents and enter a question.');return}const out=document.getElementById('chatOutput');out.textContent='Thinking…';try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,document_ids:ids})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');out.textContent=d.answer}catch(e){out.textContent=e.message}}
+async function extractForSummary(){const file=document.getElementById('summaryFile').files[0];if(!file){showToast('Choose a PDF first.');return}const form=new FormData();form.append('file',file);try{const d=await postForm('/api/upload',form);if(!d.text){throw new Error('No selectable text found. If this is a scanned PDF, use OCR first and paste the extracted text here.')}document.getElementById('summaryText').value=d.text;showToast('Text extracted. You can now summarize it.')}catch(e){showToast(e.message)}}
+async function summarizeText(){const text=document.getElementById('summaryText').value.trim();if(!text){showToast('Paste or extract document text first.');return}const box=document.getElementById('summaryResult');box.classList.add('show');box.textContent='Generating summary…';try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');renderResult('summaryResult',d)}catch(e){box.textContent=e.message}}
+async function translateText(){const text=document.getElementById('translateText').value.trim(),target=document.getElementById('targetLanguage').value.trim();if(!text||!target){showToast('Enter text and a target language.');return}const box=document.getElementById('translateResult');box.classList.add('show');box.textContent='Translating and localizing…';try{const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,target_language:target,locale:document.getElementById('locale').value,style:document.getElementById('translationStyle').value})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');renderResult('translateResult',d)}catch(e){box.textContent=e.message}}
+</script>
+</body>
+</html>
